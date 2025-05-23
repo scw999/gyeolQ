@@ -13,8 +13,14 @@
       max-width: 800px;
       margin: auto;
     }
-    h1, h2 {
+    h1, h2, h3 {
       text-align: center;
+    }
+    .description {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      color: #555;
     }
     .question {
       margin-bottom: 1.5rem;
@@ -22,19 +28,29 @@
     .question label {
       display: block;
       margin-bottom: 0.5rem;
+      font-weight: bold;
     }
-    .scale-options {
+    .radio-group {
       display: flex;
       justify-content: space-between;
-      font-size: 0.9rem;
-      margin-bottom: 0.3rem;
+      gap: 0.5rem;
     }
-    .result {
-      background-color: white;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-top: 2rem;
+    .radio-group label {
+      flex: 1;
+      text-align: center;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 1rem;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+    .radio-group input[type="radio"]:checked + label {
+      background-color: #4461f2;
+      color: white;
+      border-color: #4461f2;
     }
     .button {
       display: block;
@@ -46,32 +62,69 @@
       border: none;
       border-radius: 0.75rem;
       cursor: pointer;
+      margin-top: 1rem;
     }
-    .type {
-      font-size: 1.5rem;
+    #result {
+      display: none;
+      margin-top: 2rem;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      background-size: cover;
+      background-position: center;
+      color: #000; /* 검은색 텍스트로 변경 */
+    }
+    #typeImage {
+      font-size: 4rem;
+      text-align: center;
+      display: block;
+      margin: 0 auto 1rem;
+    }
+    #typeName {
+      font-size: 2rem;
       font-weight: bold;
-      color: #4461f2;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    #typeDescription {
+      text-align: center;
       margin-bottom: 1rem;
+    }
+    #matchList {
+      list-style: none;
+      padding: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    #matchList li {
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
   <h1>칼 융 성향 분석 설문</h1>
-  <div id="form">
-    <form id="surveyForm">
-      <div id="questions"></div>
-      <button type="submit" class="button">결과 보기</button>
-    </form>
+  <div class="description">
+    당신의 성향을 파악하여 더 조화로운 관계 매칭에 활용합니다.<br>
+    각 문항에 대해 1(전혀 아니다) ~ 5(매우 그렇다) 중 하나를 선택하세요.<br>
+    결과는 👑 왕 (King), ⚔️ 전사 (Warrior), 💞 연인 (Lover), 🧙 마법사 (Magician) 중 하나로 보여드립니다.
   </div>
-  <div id="result" class="result" style="display: none">
+  <form id="surveyForm">
+    <div id="questions"></div>
+    <h3>🧭 보조 질문 (동점 시 최종 보정)</h3>
+    <div id="bonusQuestions"></div>
+    <button type="submit" class="button">결과 보기</button>
+  </form>
+
+  <div id="result">
     <h2>🎯 분석 결과</h2>
-    <div class="type" id="mainType"></div>
-    <div id="typeDescription"></div>
-    <div id="matchSuggestion" style="margin-top: 1rem;"></div>
+    <div id="typeImage"></div>
+    <div id="typeName"></div>
+    <p id="typeDescription"></p>
+    <h3>💖 추천 궁합</h3>
+    <ul id="matchList"></ul>
   </div>
 
   <script>
-    const questions = [
+    const baseQuestions = [
       { text: "나는 어떤 모임이든 자연스럽게 중심이 되거나 리더 역할을 맡는 편이다.", group: "king" },
       { text: "나는 내 주변 사람들의 삶이 안정되도록 돕는 것을 중요하게 생각한다.", group: "king" },
       { text: "나는 계획을 세우고 그 계획대로 일이 진행되도록 관리하는 걸 즐긴다.", group: "king" },
@@ -85,56 +138,88 @@
       { text: "나는 세상이나 사람의 본질에 대한 통찰을 얻는 걸 즐긴다.", group: "magician" },
       { text: "나는 직접 경험보다 사유나 상상, 새로운 관점을 중시하는 편이다.", group: "magician" }
     ];
-
+    const bonusQuestions = [
+      { text: "나는 자율성보다는 책임감을 더 중요하게 여긴다.", group: "king" },
+      { text: "나는 감정에 민감하고 타인의 마음을 잘 느낀다.", group: "lover" },
+      { text: "나는 창의적인 아이디어와 통찰에 큰 흥미를 느낀다.", group: "magician" }
+    ];
     const descriptions = {
-      king: "👑 책임감 있고 안정적인 리더형. 구조와 질서를 중시합니다.",
-      warrior: "⚔️ 목표지향적이며 실행력이 뛰어난 도전가형입니다.",
-      lover: "💞 감성적이고 관계 중심의 표현자입니다.",
-      magician: "🧙 통찰력 있고 창의적인 사유 중심의 탐색자입니다."
+      king: "책임감 있고 안정적인 리더형입니다. 주변에 안정을 주며 모두가 따를 수 있는 방향을 제시합니다.",
+      warrior: "목표지향적이며 행동력이 뛰어난 도전가입니다. 위기에도 흔들리지 않고 앞으로 나아갑니다.",
+      lover: "감성적이고 공감 능력이 뛰어난 사람입니다. 깊은 관계를 통해 서로를 치유합니다.",
+      magician: "통찰력 있고 창의적인 사유자입니다. 새로운 가능성과 본질을 탐구합니다."
     };
-
+    const typeLabels = {
+      king: "👑 왕 (King)",
+      warrior: "⚔️ 전사 (Warrior)",
+      lover: "💞 연인 (Lover)",
+      magician: "🧙 마법사 (Magician)"
+    };
     const matches = {
-      king: "연인, 마법사",
-      warrior: "연인, 마법사",
-      lover: "왕, 전사",
-      magician: "왕, 전사"
+      king: [
+        "💡 연인: 감성적 유대가 왕님의 책임감을 따뜻하게 감쌉니다.",
+        "💡 마법사: 깊은 통찰이 리더십에 날개를 달아줍니다."
+      ],
+      warrior: [
+        "💡 연인: 열정과 감성이 만나 에너지를 균형있게 조절합니다.",
+        "💡 마법사: 실행력과 창의성이 만나 강력한 시너지를 냅니다."
+      ],
+      lover: [
+        "💡 왕: 안정감 있는 리더가 감성을 든든히 지켜줍니다.",
+        "💡 전사: 강한 추진력이 사랑의 열정을 더욱 불태웁니다."
+      ],
+      magician: [
+        "💡 왕: 현실적 기반 위에 통찰을 펼칠 기회를 제공합니다.",
+        "💡 전사: 창의적 이상을 실제로 구현할 동력이 됩니다."
+      ]
+    };
+    const images = { king: "👑", warrior: "⚔️", lover: "💞", magician: "🧙" };
+    const backgrounds = {
+      king: "linear-gradient(to right, #ffeaa7, #fab1a0)",
+      warrior: "linear-gradient(to right, #dfe6e9, #636e72)",
+      lover: "linear-gradient(to right, #f3a683, #f7d794)",
+      magician: "linear-gradient(to right, #74b9ff, #a29bfe)"
     };
 
-    const container = document.getElementById("questions");
-    questions.forEach((q, i) => {
+    const qContainer = document.getElementById("questions");
+    baseQuestions.forEach((q, i) => {
       const div = document.createElement("div");
       div.className = "question";
-      div.innerHTML = `
-        <label>${i + 1}. ${q.text}</label>
-        <div class="scale-options">
-          <span>1. 매우 아니다</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5. 매우 그렇다</span>
-        </div>
-        <input type="range" min="1" max="5" value="3" name="q${i}" data-group="${q.group}" style="width: 100%;">
-      `;
-      container.appendChild(div);
+      div.innerHTML = `<label>${i+1}. ${q.text}</label>`;
+      const group = document.createElement("div"); group.className = "radio-group"; group.setAttribute("data-group", q.group);
+      for(let v=1;v<=5;v++) {group.innerHTML += `<input type=radio id=q${i}_${v} name=q${i} value=${v} data-group=${q.group}><label for=q${i}_${v}>${v}</label>`;}      div.appendChild(group);
+      qContainer.appendChild(div);
+    });
+    const bContainer = document.getElementById("bonusQuestions");
+    bonusQuestions.forEach((q,j) => {
+      const idx = baseQuestions.length + j + 1;
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<label>${idx}. ${q.text}</label>`;
+      const group = document.createElement("div"); group.className = "radio-group bonus"; group.setAttribute("data-bonus-group", q.group);
+      for(let v=1;v<=5;v++) {group.innerHTML += `<input type=radio id=bonus_${q.group}_${v} name=bonus_${q.group} value=${v}><label for=bonus_${q.group}_${v}>${v}</label>`;}      div.appendChild(group);
+      bContainer.appendChild(div);
     });
 
-    document.getElementById("surveyForm").addEventListener("submit", function (e) {
+    document.getElementById("surveyForm").addEventListener("submit", e => {
       e.preventDefault();
-      const scores = { king: 0, warrior: 0, lover: 0, magician: 0 };
-      const inputs = document.querySelectorAll("input[type=range]");
-      inputs.forEach(input => {
-        const group = input.dataset.group;
-        scores[group] += parseInt(input.value);
-      });
-
-      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      const mainType = sorted[0][0];
-
-      document.getElementById("form").style.display = "none";
-      document.getElementById("result").style.display = "block";
-      document.getElementById("mainType").innerText = mainType.toUpperCase();
-      document.getElementById("typeDescription").innerText = descriptions[mainType];
-      document.getElementById("matchSuggestion").innerText = `💡 추천 궁합: ${matches[mainType]}`;
+      const scores = { king:0, warrior:0, lover:0, magician:0 };
+      document.querySelectorAll(".radio-group:not(.bonus) input:checked").forEach(i=> scores[i.dataset.group]+=parseInt(i.value));
+      let sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+      let top = sorted.filter(e=>e[1]===sorted[0][1]).map(e=>e[0]);
+      if(top.length>1) {
+        const bonus = {};
+        ["king","lover","magician"].forEach(g=> bonus[g]=parseInt(document.querySelector(`.bonus[data-bonus-group=${g}] input:checked`)?.value||0));
+        top.sort((a,b)=> (bonus[b]||0)-(bonus[a]||0));
+      }
+      const main = top[0];
+      document.getElementById("surveyForm").style.display="none";
+      const res = document.getElementById("result"); res.style.display="block"; res.style.background=backgrounds[main];
+      document.getElementById("typeImage").innerText=images[main];
+      document.getElementById("typeName").innerText=typeLabels[main];
+      document.getElementById("typeDescription").innerText=descriptions[main];
+      const ml = document.getElementById("matchList"); ml.innerHTML="";
+      matches[main].forEach(txt=> ml.innerHTML+=`<li>${txt}</li>`);
     });
   </script>
 </body>
