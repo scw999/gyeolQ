@@ -3,124 +3,466 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>칼 융 성향 분석 설문</title>
+  <title>결혼 심리 궁합 테스트</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(120deg, #f0f4ff, #ffffff);
-      color: #333;
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
+    body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f7f9fb; color: #21242b; padding: 2rem; max-width: 820px; margin: auto; }
+    h1, h2, h3 { text-align: center; margin-bottom: 1.2rem; }
+    h1 { font-size:2.2rem; font-weight:bold; letter-spacing:-2px;}
+    nav { display: flex; justify-content: space-around; margin-bottom: 2.3rem; gap:1.05rem; }
+    nav button {
+      flex:1;
+      min-width:130px;
+      padding: 1.1rem 0.6rem;
+      border: none;
+      border-radius: 1.2rem;
+      font-weight: bold;
+      font-size: 1.15rem;
+      letter-spacing: -1.1px;
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform .11s, background .14s, color .09s;
+      margin-bottom: .7rem;
+      outline: none;
     }
-    h1, h2 {
-      text-align: center;
+    nav button[data-target="jung"] { background: linear-gradient(90deg,#4777f3,#3653e2);}
+    nav button[data-target="attachment"] { background: linear-gradient(90deg,#22c994,#36e29a);}
+    nav button[data-target="color"] { background: linear-gradient(90deg,#f29d3a,#f37636);}
+    nav button[data-target="summary"] { background: linear-gradient(90deg,#f376b8,#c336e2);}
+    nav button.active, nav button:focus { transform: scale(1.08); box-shadow: 0 2px 18px rgba(44,62,80,.18);}
+    section { display: none; }
+    .active { display: block; }
+    .button {
+      padding: 1.2rem;
+      width: 100%;
+      background: #4777f3;
+      color: #fff;
+      border: none;
+      border-radius: 1.15rem;
+      cursor: pointer;
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin-top:.7rem;
+      margin-bottom:.23rem;
+      box-shadow: 0 1px 6px rgba(44,62,80,.11);
+      letter-spacing: -1.2px;
+      transition: background .11s, transform .09s;
     }
-    .question {
-      margin-bottom: 1.5rem;
+    .button:active { background: #3450c8;}
+    .restart { margin-top: 1.1rem; background: #888; }
+    .result-deck {
+      display: flex; flex-direction:column; gap:2.5rem;
+      margin-top:2.7rem;
+      margin-bottom:2.5rem;
     }
+    .result-card {
+      padding: 2.7rem 2rem 2.2rem 2rem;
+      border-radius: 1.55rem;
+      background: #fff;
+      box-shadow: 0 8px 36px rgba(60,55,120,0.13), 0 1px 0 #ececec;
+      border: 2.1px solid #ebe9ff;
+      margin-top: 0;
+      display: flex; flex-direction:column; align-items:center; gap:1.3em;
+      min-height: 220px;
+      text-align:center;
+      position:relative;
+      transition:box-shadow .13s;
+      font-size:1.25em;
+    }
+    .result-card .card-icon { position:absolute; left:2.1rem; top:2.1rem; font-size:2.8em; opacity:.2; z-index:1;}
+    .result-card h3 {
+      font-size:2em;
+      font-weight:800;
+      letter-spacing:-1.5px;
+      margin-bottom:.4em;
+      color: #2a3358;
+      margin-top: 0;
+      border-bottom: 2px solid #ececec;
+      padding-bottom: 0.27em;
+      width:100%;
+      background:linear-gradient(90deg,#e5eaff,#fff);
+      border-radius:.7em .7em 0 0;
+      z-index:2;
+      position:relative;
+      text-align:center;
+    }
+    .type-em { font-size:1.23em; font-weight: bold; letter-spacing:.2px; margin-bottom:.4em;}
+    .type-good { color:#13b669; font-weight: bold; font-size: 1.13em;}
+    .type-info { margin: 0.35em 0 0.7em 0; font-size:1.07em;}
+    .final-msg {
+      text-align:center;
+      margin-top:2.4em;
+      font-size:1.37em;
+      font-weight:bold;
+      color:#43417c;
+      letter-spacing:-1.2px;
+      background:linear-gradient(90deg,#f7e5ff 60%,#e5f8ff 100%);
+      border-radius:1.2em;
+      box-shadow:0 2px 30px rgba(180,120,220,0.10);
+      padding:2em 0.9em 2em 0.9em;
+      border:2px solid #e7e0f7;
+      max-width:650px; margin:auto;
+    }
+    .result-card ul { margin: 0.6em 0 0.6em 0; padding:0; list-style:none; font-size:1.08em;}
+    .result-card ul li { margin:.5em 0;}
+    .question { margin-bottom: 2.4rem; }
     .question label {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: .65rem;
+      font-weight: 700;
+      font-size: 1.19rem;
+      line-height: 1.45;
+      color: #24292f;
+      word-break: keep-all;
     }
-    .result {
-      background-color: white;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-top: 2rem;
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.06rem;
+      color: #191919;
+      margin: .65rem 0 .8rem 0;
+      font-weight: 700;
+      letter-spacing: -1px;
+      text-shadow:0 1px 0 #fff6;
     }
-    .button {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      font-size: 1.1rem;
-      background-color: #4461f2;
-      color: white;
-      border: none;
-      border-radius: 0.75rem;
-      cursor: pointer;
+    .radio-group { display: flex; justify-content: space-between; gap: .5rem; }
+    .radio-group input[type=radio] { display: none; }
+    .radio-group label {
+      flex: 1; text-align: center; padding: .53rem 0; border: 1.5px solid #ccc; border-radius: .6rem;
+      cursor: pointer; background: #fff; transition: background .1s, color .1s, border .1s;
+      font-weight: bold; font-size:1.09rem;
     }
-    .type {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #4461f2;
-      margin-bottom: 1rem;
+    .radio-group input:checked + label { background: #4461f2; color: #fff; border: 2.5px solid #4461f2; }
+    .color-circle { display: inline-block; width: 2rem; height: 2rem; border-radius: 50%; margin-right: .5rem; vertical-align: middle; }
+    @media (max-width:600px){
+      .result-card{padding:1.5rem .6rem;}
+      .final-msg{padding:1.2em .1em;}
     }
   </style>
 </head>
 <body>
-  <h1>칼 융 성향 분석 설문</h1>
-  <div id="form">
-    <form id="surveyForm">
-      <div id="questions"></div>
-      <button type="submit" class="button">결과 보기</button>
+  <h1>💍 결혼 심리 궁합 테스트</h1>
+  <nav>
+    <button data-target="jung" class="active">🌀 칼 융의 원형 분석</button>
+    <button data-target="attachment">🔗 애착 유형 분석</button>
+    <button data-target="color">🎨 색깔 궁합 분석</button>
+    <button data-target="summary">🌟 종합 결과</button>
+  </nav>
+
+  <!-- 칼 융 테스트 -->
+  <section id="jung" class="active">
+    <h2>칼 융의 원형 분석</h2>
+    <form id="surveyFormJung">
+      <div id="questionsJung"></div>
+      <div id="bonusJung"></div>
+      <button type="submit" class="button">제출</button>
     </form>
-  </div>
-  <div id="result" class="result" style="display: none">
-    <h2>🎯 분석 결과</h2>
-    <div class="type" id="mainType"></div>
-    <div id="typeDescription"></div>
-    <div id="matchSuggestion" style="margin-top: 1rem;"></div>
-  </div>
-  
+    <button id="restartJung" class="button restart" style="display:none;">다시하기</button>
+  </section>
+
+  <!-- 애착 유형 테스트 -->
+  <section id="attachment">
+    <h2>애착 유형 분석</h2>
+    <form id="surveyFormAttach">
+      <div id="questionsAttach"></div>
+      <button type="submit" class="button">제출</button>
+    </form>
+    <button id="restartAttach" class="button restart" style="display:none;">다시하기</button>
+  </section>
+
+  <!-- 색깔 궁합 테스트 -->
+  <section id="color">
+    <h2>색깔 궁합 분석</h2>
+    <form id="surveyFormColor">
+      <div class="question"><label>나의 색깔 선택</label><div id="myColorGroup" class="radio-group"></div></div>
+      <div class="question"><label>이상형의 색깔 선택</label><div id="idealColorGroup" class="radio-group"></div></div>
+      <button type="submit" class="button">제출</button>
+    </form>
+    <button id="restartColor" class="button restart" style="display:none;">다시하기</button>
+  </section>
+
+  <!-- 최종 결과 -->
+  <section id="summary">
+    <h2>🌟 종합 결과</h2>
+    <div id="summaryResult"></div>
+    <button id="resetAll" class="button restart">처음으로</button>
+  </section>
+
   <script>
-    const questions = [
-      { text: "나는 어떤 모임이든 자연스럽게 중심이 되거나 리더 역할을 맡는 편이다.", group: "king" },
-      { text: "나는 내 주변 사람들의 삶이 안정되도록 돕는 것을 중요하게 생각한다.", group: "king" },
-      { text: "나는 계획을 세우고 그 계획대로 일이 진행되도록 관리하는 걸 즐긴다.", group: "king" },
-      { text: "나는 목표를 정하면 끝까지 해내고 싶어지는 성격이다.", group: "warrior" },
-      { text: "위기의 순간에도 침착하게 대응하거나 적극적으로 나서는 편이다.", group: "warrior" },
-      { text: "경쟁이 있는 상황에서 오히려 더 에너지가 솟는 편이다.", group: "warrior" },
-      { text: "나는 사소한 감정의 변화나 분위기를 잘 느끼고 공감하는 편이다.", group: "lover" },
-      { text: "나는 사랑이나 감정을 표현하는 데 주저함이 없다.", group: "lover" },
-      { text: "예술, 음악, 문학 등 감성적인 취향이 나의 정체성에 큰 영향을 준다.", group: "lover" },
-      { text: "나는 상황의 이면을 분석하거나 관찰하는 걸 좋아한다.", group: "magician" },
-      { text: "나는 세상이나 사람의 본질에 대한 통찰을 얻는 걸 즐긴다.", group: "magician" },
-      { text: "나는 직접 경험보다 사유나 상상, 새로운 관점을 중시하는 편이다.", group: "magician" }
-    ];
-
-    const descriptions = {
-      king: "👑 책임감 있고 안정적인 리더형. 구조와 질서를 중시합니다.",
-      warrior: "⚔️ 목표지향적이며 실행력이 뛰어난 도전가형입니다.",
-      lover: "💞 감성적이고 관계 중심의 표현자입니다.",
-      magician: "🧙 통찰력 있고 창의적인 사유 중심의 탐색자입니다."
+    // 궁합표
+    const jungMatch = {
+      king: { best: "연인(💞), 마법사(🧙)", reason: "감정과 창의성의 균형으로 조화로운 관계를 만듭니다." },
+      warrior: { best: "마법사(🧙), 연인(💞)", reason: "도전+지적 교류, 감성의 조화가 잘 맞습니다." },
+      lover: { best: "왕(👑), 전사(⚔️)", reason: "리더십·실행력과 감성이 시너지 효과를 냅니다." },
+      magician: { best: "전사(⚔️), 왕(👑)", reason: "실행력/리더십과 창의성이 만난 좋은 조합입니다." }
+    };
+    const attachMatch = {
+      secure: { best:"불안형(😰), 안정형(😌)", reason:"상대의 불안을 안정시켜주는 든든한 관계가 됩니다." },
+      anxious: { best:"안정형(😌)", reason:"안정형의 배려로 마음의 평화를 찾습니다." },
+      avoidant: { best:"안정형(😌)", reason:"부드럽고 여유 있는 상대가 관계를 편안하게 만듭니다." }
     };
 
-    const matches = {
-      king: "연인, 마법사",
-      warrior: "연인, 마법사",
-      lover: "왕, 전사",
-      magician: "왕, 전사"
-    };
+    // 탭 표시 + 버튼 active 스타일
+    const navButtons = document.querySelectorAll('nav button');
+    navButtons.forEach(btn => btn.addEventListener('click', () => {
+      navButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(btn.dataset.target).classList.add('active');
+    }));
+    navButtons[0].click();
 
-    const container = document.getElementById("questions");
-    questions.forEach((q, i) => {
-      const div = document.createElement("div");
-      div.className = "question";
-      div.innerHTML = `<label>${i + 1}. ${q.text}</label>
-        <input type="range" min="1" max="5" value="3" name="q${i}" data-group="${q.group}">`;
-      container.appendChild(div);
-    });
+    const results = { jung:null, attachment:null, color:null, jungKey:null, attachKey:null };
 
-    document.getElementById("surveyForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const scores = { king: 0, warrior: 0, lover: 0, magician: 0 };
-      const inputs = document.querySelectorAll("input[type=range]");
-      inputs.forEach(input => {
-        const group = input.dataset.group;
-        scores[group] += parseInt(input.value);
+    // 칼 융 테스트
+    (function(){
+      const qJ = [
+        {t:"나는 어떤 모임이든 자연스럽게 중심이 되거나 리더 역할을 맡는 편이다.",g:"king"},
+        {t:"나는 내 주변 사람들의 삶이 안정되도록 돕는 것을 중요하게 생각한다.",g:"king"},
+        {t:"나는 계획을 세우고 그 계획대로 일이 진행되도록 관리하는 걸 즐긴다.",g:"king"},
+        {t:"나는 목표를 정하면 끝까지 해내고 싶어지는 성격이다.",g:"warrior"},
+        {t:"위기의 순간에도 침착하게 대응하거나 적극적으로 나서는 편이다.",g:"warrior"},
+        {t:"경쟁이 있는 상황에서 오히려 더 에너지가 솟는 편이다.",g:"warrior"},
+        {t:"나는 사소한 감정의 변화나 분위기를 잘 느끼고 공감하는 편이다.",g:"lover"},
+        {t:"나는 사랑이나 감정을 표현하는 데 주저함이 없다.",g:"lover"},
+        {t:"예술, 음악, 문학 등 감성적인 취향이 나의 정체성에 큰 영향을 준다.",g:"lover"},
+        {t:"나는 상황의 이면을 분석하거나 관찰하는 걸 좋아한다.",g:"magician"},
+        {t:"나는 세상이나 사람의 본질에 대한 통찰을 얻는 걸 즐긴다.",g:"magician"},
+        {t:"나는 직접 경험보다 사유나 상상, 새로운 관점을 중시하는 편이다.",g:"magician"}
+      ];
+      const bJ = [
+        {t:"나는 자율성보다는 책임감을 더 중요하게 여긴다.",g:"king"},
+        {t:"나는 감정에 민감하고 타인의 마음을 잘 느낀다.",g:"lover"},
+        {t:"나는 창의적인 아이디어와 통찰에 큰 흥미를 느낀다.",g:"magician"}
+      ];
+      const descJ={
+        king:"👑 왕(King)<br>책임감 있고 안정적인 리더형입니다.<br><b>장점:</b> 신뢰와 헌신으로 관계를 안정시킵니다.",
+        warrior:"⚔️ 전사(Warrior)<br>목표지향적이고 실행력이 뛰어난 도전가형입니다.<br><b>장점:</b> 변화를 이끄는 추진력과 열정.",
+        lover:"💞 연인(Lover)<br>감성적이고 공감 능력이 뛰어난 예술가형입니다.<br><b>장점:</b> 섬세한 배려, 깊은 감정 교류.",
+        magician:"🧙 마법사(Magician)<br>사유 깊고 통찰력 있는 탐구자형입니다.<br><b>장점:</b> 독특한 관점과 창의력."
+      };
+      const bgJ={ king:"#ffeaa7", warrior:"#dfe6e9", lover:"#f3a683", magician:"#74b9ff" };
+      const contQ=document.getElementById('questionsJung');
+      qJ.forEach((q,i)=>{
+        const d=document.createElement('div'); d.className='question';
+        d.innerHTML=`<label>${i+1}. ${q.t}</label>
+          <div class="scale-labels"><span>매우 아니다</span><span>아니다</span><span>중간</span><span>그렇다</span><span>매우 그렇다</span></div>
+          <div class="radio-group" data-group="${q.g}">
+            <input type="radio" name="qJ${i}" id="qJ${i}_1" value="1" data-group="${q.g}"><label for="qJ${i}_1">1</label>
+            <input type="radio" name="qJ${i}" id="qJ${i}_2" value="2" data-group="${q.g}"><label for="qJ${i}_2">2</label>
+            <input type="radio" name="qJ${i}" id="qJ${i}_3" value="3" data-group="${q.g}"><label for="qJ${i}_3">3</label>
+            <input type="radio" name="qJ${i}" id="qJ${i}_4" value="4" data-group="${q.g}"><label for="qJ${i}_4">4</label>
+            <input type="radio" name="qJ${i}" id="qJ${i}_5" value="5" data-group="${q.g}"><label for="qJ${i}_5">5</label>
+          </div>`;
+        contQ.appendChild(d);
+      });
+      const contB=document.getElementById('bonusJung');
+      bJ.forEach((b,i)=>{
+        const d=document.createElement('div'); d.className='question';
+        d.innerHTML=`<label>${qJ.length+i+1}. ${b.t}</label>
+          <div class="scale-labels"><span>매우 아니다</span><span>아니다</span><span>중간</span><span>그렇다</span><span>매우 그렇다</span></div>
+          <div class="radio-group" data-group="${b.g}">
+            <input type="radio" name="bonusJ${i}" id="bonusJ${i}_1" value="1" data-group="${b.g}"><label for="bonusJ${i}_1">1</label>
+            <input type="radio" name="bonusJ${i}" id="bonusJ${i}_2" value="2" data-group="${b.g}"><label for="bonusJ${i}_2">2</label>
+            <input type="radio" name="bonusJ${i}" id="bonusJ${i}_3" value="3" data-group="${b.g}"><label for="bonusJ${i}_3">3</label>
+            <input type="radio" name="bonusJ${i}" id="bonusJ${i}_4" value="4" data-group="${b.g}"><label for="bonusJ${i}_4">4</label>
+            <input type="radio" name="bonusJ${i}" id="bonusJ${i}_5" value="5" data-group="${b.g}"><label for="bonusJ${i}_5">5</label>
+          </div>`;
+        contB.appendChild(d);
       });
 
-      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      const mainType = sorted[0][0];
+      document.getElementById('surveyFormJung').addEventListener('submit',e=>{
+        e.preventDefault();
+        const s={king:0,warrior:0,lover:0,magician:0};
+        document.querySelectorAll('#questionsJung .radio-group input:checked').forEach(i=>s[i.dataset.group]+=+i.value);
+        let arr=Object.entries(s).sort((a,b)=>b[1]-a[1]), top=arr.filter(x=>x[1]===arr[0][1]).map(x=>x[0]);
+        if(top.length>1){
+          const bs={};
+          ['king','lover','magician'].forEach(g=>bs[g]=+document.querySelector(`[data-group=${g}] input:checked`)?.value||0);
+          top.sort((a,b)=>bs[b]-bs[a]);
+        }
+        const main=top[0];
+        results.jung={type:descJ[main],bg:bgJ[main], key:main};
+        results.jungKey=main;
+        document.getElementById('restartJung').style.display='block';
+        document.querySelector('nav button[data-target="attachment"]').click();
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+    })();
 
-      document.getElementById("form").style.display = "none";
-      document.getElementById("result").style.display = "block";
-      document.getElementById("mainType").innerText = mainType.toUpperCase();
-      document.getElementById("typeDescription").innerText = descriptions[mainType];
-      document.getElementById("matchSuggestion").innerText = `💡 추천 궁합: ${matches[mainType]}`;
-    });
+    // 애착 유형 테스트 (질문 12개로 확장)
+    (function(){
+      const qa = [
+        {t:"나는 가까운 사람에게 자주 연락하고 싶다.", g:"anxious"},
+        {t:"나는 감정을 숨기고 스스로 문제를 해결한다.", g:"avoidant"},
+        {t:"나는 안정된 관계에서 편안함을 느낀다.", g:"secure"},
+        {t:"거리가 느껴지면 불안해진다.", g:"anxious"},
+        {t:"감정 표현보다는 혼자 있는 걸 선호한다.", g:"avoidant"},
+        {t:"상대와의 솔직한 대화가 중요하다.", g:"secure"},
+        {t:"상대가 나를 떠날까봐 걱정할 때가 많다.", g:"anxious"},
+        {t:"혼자만의 시간이 꼭 필요하다.", g:"avoidant"},
+        {t:"서로 신뢰가 쌓이면 다툼이 생겨도 금방 회복할 수 있다.", g:"secure"},
+        {t:"사랑받고 있음을 자주 확인 받고 싶다.", g:"anxious"},
+        {t:"상대방이 감정적으로 다가오면 부담스럽다.", g:"avoidant"},
+        {t:"마음을 표현할 때, 상대를 먼저 배려하려 한다.", g:"secure"}
+      ];
+      const descA = {
+        anxious: "😰 불안형<br>가까움에 대한 욕구가 강하며, 관계에서 과도한 걱정을 합니다.<br><b>장점:</b> 작은 변화에도 민감하게 반응하여 세심한 배려가 가능합니다.",
+        avoidant: "🤐 회피형<br>독립적이고 감정 표현을 자제하며, 때때로 거리를 둡니다.<br><b>장점:</b> 감정에 흔들리지 않고 자기만의 시간을 소중히 여깁니다.",
+        secure: "😌 안정형<br>신뢰와 소통을 기반으로 편안한 관계를 유지합니다.<br><b>장점:</b> 갈등에도 침착하게 소통하며 감정을 균형 있게 존중합니다."
+      };
+      const bgA = { anxious: "#fab1a0", avoidant: "#b2bec3", secure: "#55efc4" };
+      const cont = document.getElementById('questionsAttach');
+      qa.forEach((q,i) => {
+        const d = document.createElement('div'); d.className='question';
+        d.innerHTML = `<label>${i+1}. ${q.t}</label>
+          <div class="scale-labels"><span>매우 아니다</span><span>아니다</span><span>중간</span><span>그렇다</span><span>매우 그렇다</span></div>
+          <div class="radio-group" data-group="${q.g}">
+            <input type="radio" name="qA${i}" id="qA${i}_1" value="1" data-group="${q.g}"><label for="qA${i}_1">1</label>
+            <input type="radio" name="qA${i}" id="qA${i}_2" value="2" data-group="${q.g}"><label for="qA${i}_2">2</label>
+            <input type="radio" name="qA${i}" id="qA${i}_3" value="3" data-group="${q.g}"><label for="qA${i}_3">3</label>
+            <input type="radio" name="qA${i}" id="qA${i}_4" value="4" data-group="${q.g}"><label for="qA${i}_4">4</label>
+            <input type="radio" name="qA${i}" id="qA${i}_5" value="5" data-group="${q.g}"><label for="qA${i}_5">5</label>
+          </div>`;
+        cont.appendChild(d);
+      });
+      document.getElementById('surveyFormAttach').addEventListener('submit', e => {
+        e.preventDefault();
+        const s = { anxious:0, avoidant:0, secure:0 };
+        document.querySelectorAll('#questionsAttach .radio-group input:checked')
+          .forEach(r => s[r.dataset.group] += +r.value);
+        const main = Object.entries(s).sort((a,b)=>b[1]-a[1])[0][0];
+        results.attachment = { type:descA[main], bg:bgA[main], key:main };
+        results.attachKey=main;
+        document.getElementById('restartAttach').style.display='block';
+        document.querySelector('nav button[data-target="color"]').click();
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+    })();
+
+    // 색깔 궁합 모듈
+    (function(){
+      const colors=[
+        {id:'red',name:'빨강',hex:'#e74c3c'},
+        {id:'orange',name:'주황',hex:'#e67e22'},
+        {id:'yellow',name:'노랑',hex:'#f1c40f'},
+        {id:'green',name:'초록',hex:'#2ecc71'},
+        {id:'blue',name:'파랑',hex:'#3498db'},
+        {id:'navy',name:'남색',hex:'#2c3e50'},
+        {id:'purple',name:'보라',hex:'#9b59b6'},
+        {id:'pink',name:'핑크',hex:'#fd79a8'},
+        {id:'sky',name:'하늘색',hex:'#74b9ff'}
+      ];
+      const compat={
+        warm_warm:{
+          desc:'🔥 열정이 넘치는 만남! 두 사람 모두 활기찬 색의 만남으로, 강한 끌림과 에너지가 가득한 조합입니다.',
+          tip:'함께 새로운 도전을 시도해보세요. 서로의 열정을 공유하면 큰 시너지가 납니다! 💪'
+        },
+        warm_cool:{
+          desc:'🌈 따뜻함과 시원함의 완벽한 조화! 균형 잡힌 관계입니다.',
+          tip:'성향의 차이가 오히려 장점! 서로 다른 관점에서 성장할 수 있어요. 👫'
+        },
+        cool_cool:{
+          desc:'❄️ 차분함과 안정감의 공감, 편안한 관계입니다.',
+          tip:'서로를 편안하게 해주는 조합, 심리적 안정감이 큽니다. 🍀'
+        },
+        pastel_pastel:{
+          desc:'💐 부드럽고 달콤한 색의 향연, 로맨틱한 케미입니다.',
+          tip:'감성적 대화와 취미로 서로의 감정을 풍부하게 채워보세요. 🎶'
+        },
+        warm_pastel:{
+          desc:'☀️+🌸 강렬함과 부드러움의 만남, 생동감 있는 조합입니다.',
+          tip:'서로의 개성을 존중하며, 활동적인 일정과 로맨틱한 순간을 번갈아 즐기면 베스트! 💖'
+        },
+        cool_pastel:{
+          desc:'🌊+🍧 시원함과 부드러움의 조화, 달콤하면서도 안정적인 관계입니다.',
+          tip:'차분함과 다정함이 만난 조화, 섬세한 배려가 관계의 매력을 높여줍니다. 😊'
+        }
+      };
+      function warm(id){
+        if(['red','orange','yellow'].includes(id))return 'warm';
+        if(['blue','navy','green'].includes(id))return 'cool';
+        return 'pastel';
+      }
+      const myG=document.getElementById('myColorGroup'),idealG=document.getElementById('idealColorGroup');
+      colors.forEach(c=>
+        [myG,idealG].forEach(g=>{
+          const i=document.createElement('input');i.type='radio';i.id=g.id+'_'+c.id;i.name=g.id;i.value=c.id;
+          const l=document.createElement('label');l.htmlFor=i.id;l.innerText=c.name;l.style.background=c.hex;l.style.color='#fff';g.appendChild(i);g.appendChild(l);
+        })
+      );
+      document.getElementById('surveyFormColor').addEventListener('submit',e=>{
+        e.preventDefault();
+        const my=document.querySelector('input[name=myColorGroup]:checked')?.value,
+              ideal=document.querySelector('input[name=idealColorGroup]:checked')?.value;
+        if(!my||!ideal)return alert('모두 선택해주세요');
+        const m=colors.find(c=>c.id===my),i=colors.find(c=>c.id===ideal),key=warm(my)+'_'+warm(ideal),d=compat[key]||compat['warm_pastel'];
+        results.color={my:m.name,ideal:i.name,desc:d.desc,tip:d.tip,bg:`linear-gradient(to right, ${m.hex}, ${i.hex})`};
+        document.getElementById('restartColor').style.display='block';
+        document.querySelector('nav button[data-target="summary"]').click();
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+    })();
+
+    // 최종 결과 표시
+    function showSummary(){
+      const div=document.getElementById('summaryResult');
+      if(!results.jung||!results.attachment||!results.color){
+        div.innerHTML='<p>모든 테스트를 완료하세요.</p>';return;
+      }
+      let jungType = results.jungKey;
+      let attachType = results.attachKey;
+      let jungMsg = {
+        king: "<span style='font-size:2.5em;'>👑</span><br>당신은<br><b>믿음직한 리더형(왕)</b>!<br>조직이나 가족에서 중심을 잡아주고 모두를 아우르는 힘이 있습니다.",
+        warrior: "<span style='font-size:2.5em;'>⚔️</span><br>당신은<br><b>열정적 실행가형(전사)</b>!<br>도전과 추진력, 활력이 가득합니다.",
+        lover: "<span style='font-size:2.5em;'>💞</span><br>당신은<br><b>감성가형(연인)</b>!<br>공감과 배려로 사랑받는 타입입니다.",
+        magician: "<span style='font-size:2.5em;'>🧙</span><br>당신은<br><b>아이디어 뱅크(마법사)</b>!<br>창의적이고 통찰력이 돋보입니다."
+      }[jungType];
+      let attachMsg = {
+        secure: "<span style='font-size:2.3em;'>😌</span><br><b>안정형</b><br>신뢰와 소통으로<br>관계를 편안하게 이끌어갑니다.",
+        anxious: "<span style='font-size:2.3em;'>😰</span><br><b>불안형</b><br>가까움을 중시하고<br>애정 확인이 꼭 필요합니다.",
+        avoidant: "<span style='font-size:2.3em;'>🤐</span><br><b>회피형</b><br>독립적이고<br>거리를 두는 것을 편안해합니다."
+      }[attachType];
+      let bestType = jungMatch[jungType].best;
+      let bestWhy = jungMatch[jungType].reason;
+      let bestAttach = attachMatch[attachType].best;
+      let bestAttachWhy = attachMatch[attachType].reason;
+
+      div.innerHTML=`
+        <div class="result-deck">
+        <div class="result-card" style="background:${results.jung.bg}">
+          <div class="card-icon">🌀</div>
+          <h3>원형 심리</h3>
+          <div class="type-em">${jungMsg}</div>
+          <div class="type-info"><b>강점:</b><br> ${results.jung.type}</div>
+        </div>
+        <div class="result-card" style="background:${results.attachment.bg}">
+          <div class="card-icon">🔗</div>
+          <h3>애착 유형</h3>
+          <div class="type-em">${attachMsg}</div>
+          <div class="type-info"><b>대인관계 강점:</b><br> ${results.attachment.type}</div>
+        </div>
+        <div class="result-card" style="background:${results.color.bg}">
+          <div class="card-icon">🎨</div>
+          <h3>색깔 궁합</h3>
+          <div class="type-em">나: ${results.color.my} &nbsp;｜&nbsp; 이상형: ${results.color.ideal}</div>
+          <ul>
+            <li>궁합: <b>${results.color.desc}</b></li>
+            <li>💡 <span>${results.color.tip}</span></li>
+          </ul>
+        </div>
+        </div>
+        <div class="final-msg">
+          <span style="font-size:1.4em;">💡 <b>나의 결혼 궁합 총평</b></span><br><br>
+          <span style="font-size:1.2em;">🧩 <b>성향 궁합</b>: <span class="type-good">${bestType}</span> 타입과 최상!<br></span>
+          <span style="color:#676686; font-size:0.98em;">${bestWhy}</span><br><br>
+          <span style="font-size:1.2em;">💞 <b>애착 궁합</b>: <span class="type-good">${bestAttach}</span> 유형이 베스트!<br></span>
+          <span style="color:#676686; font-size:0.98em;">${bestAttachWhy}</span>
+        </div>
+      `;
+    }
+    document.querySelector('nav button[data-target="summary"]').addEventListener('click', showSummary);
+    document.getElementById('resetAll').addEventListener('click', ()=>location.reload());
   </script>
 </body>
 </html>
