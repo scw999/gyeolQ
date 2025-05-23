@@ -71,7 +71,7 @@
       border-radius: 1.5rem;
       background-size: cover;
       background-position: center;
-      color: #000; /* 검은색 텍스트로 변경 */
+      color: #000;
     }
     #typeImage {
       font-size: 4rem;
@@ -121,6 +121,7 @@
     <p id="typeDescription"></p>
     <h3>💖 추천 궁합</h3>
     <ul id="matchList"></ul>
+    <button id="restartBtn" class="button">다시하기</button>
   </div>
 
   <script>
@@ -201,6 +202,12 @@
       bContainer.appendChild(div);
     });
 
+    function resetSurvey() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+      document.getElementById("result").style.display = "none";
+      document.getElementById("surveyForm").style.display = "block";
+    }
+
     document.getElementById("surveyForm").addEventListener("submit", e => {
       e.preventDefault();
       const scores = { king:0, warrior:0, lover:0, magician:0 };
@@ -221,6 +228,8 @@
       const ml = document.getElementById("matchList"); ml.innerHTML="";
       matches[main].forEach(txt=> ml.innerHTML+=`<li>${txt}</li>`);
     });
+
+    document.getElementById("restartBtn").addEventListener("click", resetSurvey);
   </script>
 </body>
 </html>
