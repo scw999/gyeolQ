@@ -132,7 +132,14 @@
       cursor: pointer; background: #fff; transition: background .1s, color .1s, border .1s;
       font-weight: bold; font-size:1.09rem;
     }
+    /* 칼융, 색깔 등 기본 선택 파란색 */
     .radio-group input:checked + label { background: #4461f2; color: #fff; border: 2.5px solid #4461f2; }
+    /* 애착유형 분석 점수 선택시 탭 색과 동일하게! */
+    #attachment .radio-group input:checked + label {
+      background: linear-gradient(90deg, #22c994 65%, #36e29a 100%);
+      color: #fff;
+      border: 2.5px solid #22c994;
+    }
     .color-circle { display: inline-block; width: 2rem; height: 2rem; border-radius: 50%; margin-right: .5rem; vertical-align: middle; }
     @media (max-width:600px){
       .result-card{padding:1.5rem .6rem;}
