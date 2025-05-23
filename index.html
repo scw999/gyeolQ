@@ -23,6 +23,12 @@
       display: block;
       margin-bottom: 0.5rem;
     }
+    .scale-options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
     .result {
       background-color: white;
       border-radius: 1.5rem;
@@ -63,7 +69,7 @@
     <div id="typeDescription"></div>
     <div id="matchSuggestion" style="margin-top: 1rem;"></div>
   </div>
-  
+
   <script>
     const questions = [
       { text: "나는 어떤 모임이든 자연스럽게 중심이 되거나 리더 역할을 맡는 편이다.", group: "king" },
@@ -98,8 +104,17 @@
     questions.forEach((q, i) => {
       const div = document.createElement("div");
       div.className = "question";
-      div.innerHTML = `<label>${i + 1}. ${q.text}</label>
-        <input type="range" min="1" max="5" value="3" name="q${i}" data-group="${q.group}">`;
+      div.innerHTML = `
+        <label>${i + 1}. ${q.text}</label>
+        <div class="scale-options">
+          <span>1. 매우 아니다</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5. 매우 그렇다</span>
+        </div>
+        <input type="range" min="1" max="5" value="3" name="q${i}" data-group="${q.group}" style="width: 100%;">
+      `;
       container.appendChild(div);
     });
 
