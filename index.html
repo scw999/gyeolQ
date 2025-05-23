@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>칼 융 성향 분석 설문</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #f0f4ff, #ffffff);
+      color: #333;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+    }
+    .question label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .result {
+      background-color: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+    }
+    .button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      background-color: #4461f2;
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+    }
+    .type {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4461f2;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>칼 융 성향 분석 설문</h1>
+  <div id="form">
+    <form id="surveyForm">
+      <div id="questions"></div>
+      <button type="submit" class="button">결과 보기</button>
+    </form>
+  </div>
+  <div id="result" class="result" style="display: none">
+    <h2>🎯 분석 결과</h2>
+    <div class="type" id="mainType"></div>
+    <div id="typeDescription"></div>
+    <div id="matchSuggestion" style="margin-top: 1rem;"></div>
+  </div>
+  
+  <script>
+    const questions = [
+      { text: "나는 어떤 모임이든 자연스럽게 중심이 되거나 리더 역할을 맡는 편이다.", group: "king" },
+      { text: "나는 내 주변 사람들의 삶이 안정되도록 돕는 것을 중요하게 생각한다.", group: "king" },
+      { text: "나는 계획을 세우고 그 계획대로 일이 진행되도록 관리하는 걸 즐긴다.", group: "king" },
+      { text: "나는 목표를 정하면 끝까지 해내고 싶어지는 성격이다.", group: "warrior" },
+      { text: "위기의 순간에도 침착하게 대응하거나 적극적으로 나서는 편이다.", group: "warrior" },
+      { text: "경쟁이 있는 상황에서 오히려 더 에너지가 솟는 편이다.", group: "warrior" },
+      { text: "나는 사소한 감정의 변화나 분위기를 잘 느끼고 공감하는 편이다.", group: "lover" },
+      { text: "나는 사랑이나 감정을 표현하는 데 주저함이 없다.", group: "lover" },
+      { text: "예술, 음악, 문학 등 감성적인 취향이 나의 정체성에 큰 영향을 준다.", group: "lover" },
+      { text: "나는 상황의 이면을 분석하거나 관찰하는 걸 좋아한다.", group: "magician" },
+      { text: "나는 세상이나 사람의 본질에 대한 통찰을 얻는 걸 즐긴다.", group: "magician" },
+      { text: "나는 직접 경험보다 사유나 상상, 새로운 관점을 중시하는 편이다.", group: "magician" }
+    ];
+
+    const descriptions = {
+      king: "👑 책임감 있고 안정적인 리더형. 구조와 질서를 중시합니다.",
+      warrior: "⚔️ 목표지향적이며 실행력이 뛰어난 도전가형입니다.",
+      lover: "💞 감성적이고 관계 중심의 표현자입니다.",
+      magician: "🧙 통찰력 있고 창의적인 사유 중심의 탐색자입니다."
+    };
+
+    const matches = {
+      king: "연인, 마법사",
+      warrior: "연인, 마법사",
+      lover: "왕, 전사",
+      magician: "왕, 전사"
+    };
+
+    const container = document.getElementById("questions");
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<label>${i + 1}. ${q.text}</label>
+        <input type="range" min="1" max="5" value="3" name="q${i}" data-group="${q.group}">`;
+      container.appendChild(div);
+    });
+
+    document.getElementById("surveyForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const scores = { king: 0, warrior: 0, lover: 0, magician: 0 };
+      const inputs = document.querySelectorAll("input[type=range]");
+      inputs.forEach(input => {
+        const group = input.dataset.group;
+        scores[group] += parseInt(input.value);
+      });
+
+      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const mainType = sorted[0][0];
+
+      document.getElementById("form").style.display = "none";
+      document.getElementById("result").style.display = "block";
+      document.getElementById("mainType").innerText = mainType.toUpperCase();
+      document.getElementById("typeDescription").innerText = descriptions[mainType];
+      document.getElementById("matchSuggestion").innerText = `💡 추천 궁합: ${matches[mainType]}`;
+    });
+  </script>
+</body>
+</html>
