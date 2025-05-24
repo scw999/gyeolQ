@@ -5,18 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>결혼 심리 궁합 테스트</title>
   <style>
-    body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f7f9fb; color: #21242b; padding: 2rem; max-width: 820px; margin: auto; }
-    h1, h2, h3 { text-align: center; margin-bottom: 1.2rem; }
-    h1 { font-size:2.2rem; font-weight:bold; letter-spacing:-2px;}
-    nav { display: flex; justify-content: space-around; margin-bottom: 2.3rem; gap:1.05rem; }
+    html, body {
+      background: #f7f9fb;
+      color: #21242b;
+      padding: 0;
+      margin: 0;
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    }
+    body { max-width: 820px; margin: auto; padding: 2rem 1rem 2rem 1rem; }
+    h1 { font-size:2.2rem; font-weight: bold; text-align: center; margin: 0 0 1.1rem 0; letter-spacing:-1.5px;}
+    nav { display: flex; justify-content: space-around; margin-bottom: 1.7rem; gap:.7rem; flex-wrap:wrap;}
     nav button {
       flex:1;
-      min-width:130px;
-      padding: 1.1rem 0.6rem;
+      min-width:110px;
+      padding: 1rem 0.5rem;
       border: none;
       border-radius: 1.2rem;
       font-weight: bold;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       letter-spacing: -1.1px;
       color: #fff;
       box-shadow: 0 2px 12px rgba(0,0,0,0.12);
@@ -24,6 +30,7 @@
       transition: transform .11s, background .14s, color .09s;
       margin-bottom: .7rem;
       outline: none;
+      margin-right:2px;
     }
     nav button[data-target="jung"] { background: linear-gradient(90deg,#4777f3,#3653e2);}
     nav button[data-target="attachment"] { background: linear-gradient(90deg,#22c994,#36e29a);}
@@ -32,15 +39,46 @@
     nav button.active, nav button:focus { transform: scale(1.08); box-shadow: 0 2px 18px rgba(44,62,80,.18);}
     section { display: none; }
     .active { display: block; }
+    .test-header {
+      display:flex; align-items: center; justify-content: center;
+      gap:1rem;
+      padding:1.1rem 1.1rem 1.1rem 1.1rem;
+      border-radius: 1.15rem;
+      margin-bottom: 1.0rem;
+      font-weight: 900;
+      font-size: 1.6em;
+      color:#fff;
+      box-shadow: 0 2px 12px rgba(44,62,80,.08);
+      letter-spacing:-1px;
+      position:relative;
+      min-height: 62px;
+      text-align: center;
+    }
+    .test-header .icon { font-size:2.0em; margin-right:.42em;}
+    .test-desc {
+      font-size: 1.11em; font-weight: 700;
+      margin-bottom:2.1rem; margin-top: -.9rem;
+      color:#222; background: linear-gradient(90deg,#fff6a1 0%, #f7e1fa 100%);
+      border-radius:1.1em; padding:1.1em 1em;
+      text-align:center;
+      box-shadow: 0 1px 8px #f0e7ff91;
+      border: 1.7px solid #e3c3ff;
+      max-width:600px;
+      margin-left:auto;margin-right:auto;
+    }
+    #jung .test-header { background: linear-gradient(90deg,#4777f3,#3653e2);}
+    #attachment .test-header { background: linear-gradient(90deg,#22c994,#36e29a);}
+    #color .test-header { background: linear-gradient(90deg,#f29d3a,#f37636);}
+    #summary .test-header { background: linear-gradient(90deg,#f376b8,#c336e2);}
     .button {
-      padding: 1.2rem;
+      padding: 1.05rem;
       width: 100%;
       background: #4777f3;
       color: #fff;
       border: none;
       border-radius: 1.15rem;
       cursor: pointer;
-      font-size: 1.15rem;
+      font-size: 1.09rem;
       font-weight: bold;
       margin-top:.7rem;
       margin-bottom:.23rem;
@@ -52,33 +90,39 @@
     .restart { margin-top: 1.1rem; background: #888; }
     .result-deck {
       display: flex; flex-direction:column; gap:2.5rem;
-      margin-top:2.7rem;
-      margin-bottom:2.5rem;
+      margin-top:2.1rem;
+      margin-bottom:2rem;
     }
     .result-card {
-      padding: 2.7rem 2rem 2.2rem 2rem;
-      border-radius: 1.55rem;
+      padding: 2.2rem 1.3rem 1.7rem 1.3rem;
+      border-radius: 1.2rem;
       background: #fff;
       box-shadow: 0 8px 36px rgba(60,55,120,0.13), 0 1px 0 #ececec;
       border: 2.1px solid #ebe9ff;
       margin-top: 0;
-      display: flex; flex-direction:column; align-items:center; gap:1.3em;
-      min-height: 220px;
+      display: flex; flex-direction:column; align-items:center; gap:1.1em;
+      min-height: 165px;
       text-align:center;
       position:relative;
-      transition:box-shadow .13s;
-      font-size:1.25em;
+      font-size:1.09em;
+      max-width:520px; margin:auto;
     }
-    .result-card .card-icon { position:absolute; left:2.1rem; top:2.1rem; font-size:2.8em; opacity:.2; z-index:1;}
+    .result-card .card-icon {
+      position:absolute;
+      left:1.5rem; top:1.3rem;
+      font-size:2.1em;
+      opacity:0.98; /* 진하게 표시 */
+      z-index:1;
+    }
     .result-card h3 {
-      font-size:2em;
+      font-size:1.4em;
       font-weight:800;
       letter-spacing:-1.5px;
-      margin-bottom:.4em;
+      margin-bottom:.2em;
       color: #2a3358;
       margin-top: 0;
       border-bottom: 2px solid #ececec;
-      padding-bottom: 0.27em;
+      padding-bottom: 0.13em;
       width:100%;
       background:linear-gradient(90deg,#e5eaff,#fff);
       border-radius:.7em .7em 0 0;
@@ -86,64 +130,111 @@
       position:relative;
       text-align:center;
     }
-    .type-em { font-size:1.23em; font-weight: bold; letter-spacing:.2px; margin-bottom:.4em;}
-    .type-good { color:#13b669; font-weight: bold; font-size: 1.13em;}
-    .type-info { margin: 0.35em 0 0.7em 0; font-size:1.07em;}
+    .type-em { font-size:1.18em; font-weight: bold; letter-spacing:.2px; margin-bottom:.35em;}
+    .type-good { color:#13b669; font-weight: bold; font-size: 1.09em;}
+    .type-info { margin: 0.21em 0 0.4em 0; font-size:.98em;}
     .final-msg {
       text-align:center;
-      margin-top:2.4em;
-      font-size:1.37em;
+      margin-top:2.0em;
+      font-size:1.13em;
       font-weight:bold;
       color:#43417c;
       letter-spacing:-1.2px;
       background:linear-gradient(90deg,#f7e5ff 60%,#e5f8ff 100%);
-      border-radius:1.2em;
+      border-radius:1.1em;
       box-shadow:0 2px 30px rgba(180,120,220,0.10);
-      padding:2em 0.9em 2em 0.9em;
+      padding:1.2em 0.8em 1.5em 0.8em;
       border:2px solid #e7e0f7;
       max-width:650px; margin:auto;
     }
-    .result-card ul { margin: 0.6em 0 0.6em 0; padding:0; list-style:none; font-size:1.08em;}
-    .result-card ul li { margin:.5em 0;}
-    .question { margin-bottom: 2.4rem; }
+    .result-card ul { margin: 0.5em 0 0.6em 0; padding:0; list-style:none; font-size:1.06em;}
+    .result-card ul li { margin:.4em 0;}
+    .question { margin-bottom: 2.0rem; }
     .question label {
       display: block;
-      margin-bottom: .65rem;
+      margin-bottom: .57rem;
       font-weight: 700;
-      font-size: 1.19rem;
-      line-height: 1.45;
+      font-size: 1.13rem;
+      line-height: 1.44;
       color: #24292f;
       word-break: keep-all;
     }
     .scale-labels {
       display: flex;
       justify-content: space-between;
-      font-size: 1.06rem;
+      font-size: .98rem;
       color: #191919;
-      margin: .65rem 0 .8rem 0;
+      margin: .55rem 0 .7rem 0;
       font-weight: 700;
       letter-spacing: -1px;
       text-shadow:0 1px 0 #fff6;
     }
-    .radio-group { display: flex; justify-content: space-between; gap: .5rem; }
+    .radio-group { display: flex; justify-content: space-between; gap: .4rem; }
     .radio-group input[type=radio] { display: none; }
     .radio-group label {
-      flex: 1; text-align: center; padding: .53rem 0; border: 1.5px solid #ccc; border-radius: .6rem;
+      flex: 1; text-align: center; padding: .46rem 0; border: 1.5px solid #ccc; border-radius: .6rem;
       cursor: pointer; background: #fff; transition: background .1s, color .1s, border .1s;
-      font-weight: bold; font-size:1.09rem;
+      font-weight: bold; font-size:1.04rem;
     }
-    /* 칼융, 색깔 등 기본 선택 파란색 */
-    .radio-group input:checked + label { background: #4461f2; color: #fff; border: 2.5px solid #4461f2; }
-    /* 애착유형 분석 점수 선택시 탭 색과 동일하게! */
+    /* 칼융 그라디언트 */
+    #jung .radio-group input:checked + label {
+      background: linear-gradient(90deg, #4777f3 65%, #3653e2 100%);
+      color: #fff;
+      border: 2.5px solid #4777f3;
+    }
+    /* 애착유형 그라디언트 */
     #attachment .radio-group input:checked + label {
       background: linear-gradient(90deg, #22c994 65%, #36e29a 100%);
       color: #fff;
       border: 2.5px solid #22c994;
     }
+    /* 색깔 궁합: 가운데 정렬 및 스타일 */
+    #myColorGroup, #idealColorGroup {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .18em;
+    }
+    #myColorGroup label, #idealColorGroup label {
+      flex: unset; display:inline-block;
+      min-width: 80px; font-size:1.09em;
+      margin: 0 0.18em 0.14em 0;
+      border-radius: .8em;
+      font-weight:700;
+      color:#fff;
+      text-shadow: 0 1px 6px #2223;
+      border: 2px solid #fff;
+      padding: .6em 1.2em .6em 1.2em;
+      box-shadow:0 1px 8px #0001;
+      cursor:pointer;
+      transition: all .13s;
+      letter-spacing:-1px;
+    }
+    /* 색깔 궁합: 선택 시 강조 */
+    #myColorGroup input:checked + label, #idealColorGroup input:checked + label {
+      outline: 0;
+      border: 2.5px solid #222;
+      color: #222 !important;
+      background: #fff !important;
+      text-shadow: none;
+      box-shadow:0 0 0 4px #e7e7e7;
+    }
     .color-circle { display: inline-block; width: 2rem; height: 2rem; border-radius: 50%; margin-right: .5rem; vertical-align: middle; }
     @media (max-width:600px){
-      .result-card{padding:1.5rem .6rem;}
-      .final-msg{padding:1.2em .1em;}
+      body {padding: .7rem .2rem 2rem .2rem;}
+      nav {gap:2px;}
+      .test-header {padding:.65rem .4rem;font-size:1.13em; min-height:45px;}
+      .result-card{padding:1.0rem .3rem;}
+      .final-msg{padding:.7em .1em;}
+      .type-em{font-size:1.04em;}
+      .scale-labels{font-size:.90em;}
+      .question label{font-size:1.03rem;}
+      .radio-group label{font-size:0.98rem; padding:.36rem 0;}
+      .result-deck{gap:1.05rem;}
+      .test-desc{font-size:1em;padding:.8em .5em;}
+      #myColorGroup label, #idealColorGroup label {
+        min-width:65px;font-size:1em;padding:.5em 1em;
+      }
     }
   </style>
 </head>
@@ -158,7 +249,12 @@
 
   <!-- 칼 융 테스트 -->
   <section id="jung" class="active">
-    <h2>칼 융의 원형 분석</h2>
+    <div class="test-header"><span class="icon">🌀</span>칼 융의 원형 분석</div>
+    <div class="test-desc">
+      <b>나의 대표 성향이 무엇인지 알아봅니다.<br>
+      👑 왕, ⚔️ 전사, 💞 연인, 🧙 마법사 네 가지 원형 중<br>
+      나는 어떤 모습이 강한지 알 수 있습니다.</b>
+    </div>
     <form id="surveyFormJung">
       <div id="questionsJung"></div>
       <div id="bonusJung"></div>
@@ -169,7 +265,16 @@
 
   <!-- 애착 유형 테스트 -->
   <section id="attachment">
-    <h2>애착 유형 분석</h2>
+    <div class="test-header"><span class="icon">🔗</span>애착 유형 분석</div>
+    <div class="test-desc">
+      <b>
+        회피형, 불안형, 안정형 중<br>
+        나는 어떤 애착 유형인지 알아봅니다.<br>
+        연인/배우자와의 관계에서<br>
+        내 애정 표현, 거리감, 신뢰감 등<br>
+        대인관계의 심리적 안전감을 확인해보세요.
+      </b>
+    </div>
     <form id="surveyFormAttach">
       <div id="questionsAttach"></div>
       <button type="submit" class="button">제출</button>
@@ -179,10 +284,18 @@
 
   <!-- 색깔 궁합 테스트 -->
   <section id="color">
-    <h2>색깔 궁합 분석</h2>
+    <div class="test-header"><span class="icon">🎨</span>색깔 궁합 분석</div>
+    <div class="test-desc">
+      <b>
+        <span style="color:#f37636;">‘나’</span>를 떠올릴 때<br>
+        가장 먼저 생각나는 색을 고르고,<br>
+        <span style="color:#478af3;">‘이상형(상대방)’</span>을 떠올릴 때<br>
+        가장 먼저 생각나는 색도 골라보세요.
+      </b>
+    </div>
     <form id="surveyFormColor">
       <div class="question"><label>나의 색깔 선택</label><div id="myColorGroup" class="radio-group"></div></div>
-      <div class="question"><label>이상형의 색깔 선택</label><div id="idealColorGroup" class="radio-group"></div></div>
+      <div class="question"><label>이상형(상대방)의 색깔 선택</label><div id="idealColorGroup" class="radio-group"></div></div>
       <button type="submit" class="button">제출</button>
     </form>
     <button id="restartColor" class="button restart" style="display:none;">다시하기</button>
@@ -190,11 +303,13 @@
 
   <!-- 최종 결과 -->
   <section id="summary">
-    <h2>🌟 종합 결과</h2>
+    <div class="test-header"><span class="icon">🌟</span>종합 결과</div>
+    <div class="test-desc">
+      <b>각 심리·애착·이미지 궁합을 종합 분석한<br>나만의 결혼 궁합 결과입니다!</b>
+    </div>
     <div id="summaryResult"></div>
     <button id="resetAll" class="button restart">처음으로</button>
   </section>
-
   <script>
     // 궁합표
     const jungMatch = {
@@ -277,11 +392,17 @@
           </div>`;
         contB.appendChild(d);
       });
-
       document.getElementById('surveyFormJung').addEventListener('submit',e=>{
         e.preventDefault();
+        const total = document.querySelectorAll('#questionsJung .radio-group').length + document.querySelectorAll('#bonusJung .radio-group').length;
+        const checked = document.querySelectorAll('#questionsJung .radio-group input:checked').length + document.querySelectorAll('#bonusJung .radio-group input:checked').length;
+        if(checked < total){
+          alert("모든 문항에 응답해 주세요!");
+          return;
+        }
         const s={king:0,warrior:0,lover:0,magician:0};
         document.querySelectorAll('#questionsJung .radio-group input:checked').forEach(i=>s[i.dataset.group]+=+i.value);
+        document.querySelectorAll('#bonusJung .radio-group input:checked').forEach(i=>s[i.dataset.group]+=+i.value);
         let arr=Object.entries(s).sort((a,b)=>b[1]-a[1]), top=arr.filter(x=>x[1]===arr[0][1]).map(x=>x[0]);
         if(top.length>1){
           const bs={};
@@ -335,6 +456,12 @@
       });
       document.getElementById('surveyFormAttach').addEventListener('submit', e => {
         e.preventDefault();
+        const total = document.querySelectorAll('#questionsAttach .radio-group').length;
+        const checked = document.querySelectorAll('#questionsAttach .radio-group input:checked').length;
+        if(checked < total){
+          alert("모든 문항에 응답해 주세요!");
+          return;
+        }
         const s = { anxious:0, avoidant:0, secure:0 };
         document.querySelectorAll('#questionsAttach .radio-group input:checked')
           .forEach(r => s[r.dataset.group] += +r.value);
@@ -402,7 +529,10 @@
         e.preventDefault();
         const my=document.querySelector('input[name=myColorGroup]:checked')?.value,
               ideal=document.querySelector('input[name=idealColorGroup]:checked')?.value;
-        if(!my||!ideal)return alert('모두 선택해주세요');
+        if(!my||!ideal){
+          alert("모든 문항에 응답해 주세요!");
+          return;
+        }
         const m=colors.find(c=>c.id===my),i=colors.find(c=>c.id===ideal),key=warm(my)+'_'+warm(ideal),d=compat[key]||compat['warm_pastel'];
         results.color={my:m.name,ideal:i.name,desc:d.desc,tip:d.tip,bg:`linear-gradient(to right, ${m.hex}, ${i.hex})`};
         document.getElementById('restartColor').style.display='block';
@@ -438,21 +568,21 @@
       div.innerHTML=`
         <div class="result-deck">
         <div class="result-card" style="background:${results.jung.bg}">
-          <div class="card-icon">🌀</div>
+          <div class="card-icon" style="opacity:0.98;">🌀</div>
           <h3>원형 심리</h3>
           <div class="type-em">${jungMsg}</div>
           <div class="type-info"><b>강점:</b><br> ${results.jung.type}</div>
         </div>
         <div class="result-card" style="background:${results.attachment.bg}">
-          <div class="card-icon">🔗</div>
+          <div class="card-icon" style="opacity:0.98;">🔗</div>
           <h3>애착 유형</h3>
           <div class="type-em">${attachMsg}</div>
           <div class="type-info"><b>대인관계 강점:</b><br> ${results.attachment.type}</div>
         </div>
         <div class="result-card" style="background:${results.color.bg}">
-          <div class="card-icon">🎨</div>
+          <div class="card-icon" style="opacity:0.98;">🎨</div>
           <h3>색깔 궁합</h3>
-          <div class="type-em">나: ${results.color.my} &nbsp;｜&nbsp; 이상형: ${results.color.ideal}</div>
+          <div class="type-em">나: ${results.color.my} &nbsp;｜&nbsp; 이상형(상대방): ${results.color.ideal}</div>
           <ul>
             <li>궁합: <b>${results.color.desc}</b></li>
             <li>💡 <span>${results.color.tip}</span></li>
